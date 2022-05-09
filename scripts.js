@@ -112,8 +112,11 @@ function resetStat(){
 const taCols = 100;
 const taRows = 20;
 
-document.addEventListener('keydown', function(event) {
-    console.log(event.code);
+document.addEventListener('keyup', (e)=> {
+    document.body.querySelector(`[data-code=${e.code}]`).style.backgroundColor = "red";
+  });
+document.addEventListener('keydown', (e)=> {
+    document.body.querySelector(`[data-code=${e.code}]`).style.backgroundColor = "grey";
   });
 document.addEventListener("DOMContentLoaded", ()=>{
     let kb = new Keyboard();
@@ -178,6 +181,15 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 break;
             case 'down':
                 break;
+        }
+        if(stat.shift||stat.caps){
+            document.body.querySelectorAll('[data-type="sym"]').forEach((val)=>{
+                val.textContent = kb.layout[val.dataset.key].shift;
+            });
+        } else {
+            document.body.querySelectorAll('[data-type="sym"]').forEach((val)=>{
+                val.textContent = kb.layout[val.dataset.key].default;
+            });
         }
     }));
     
