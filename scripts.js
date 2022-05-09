@@ -414,9 +414,11 @@ function resetStat() {
 }
 
 function activeClassToggle() {
-  for (const par of stat) {
-    if (stat[par] && par !== 'layout') document.body.querySelector(`[data-type=${par}]`).classList.add('active');
-    else document.body.querySelector(`[data-type=${par}]`).classList.remove('active');
+  for (const par in stat) {
+    if (par !== 'layout') {
+      if (stat[par]) document.body.querySelector(`[data-type=${par}]`).classList.add('active');
+      else document.body.querySelector(`[data-type=${par}]`).classList.remove('active');
+    }
   }
 }
 
