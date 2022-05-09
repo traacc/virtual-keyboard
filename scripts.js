@@ -59,12 +59,12 @@ class Keyboard {
             comma: {default:',', shift:'<', altgr: '', shift_altgr: '', code: "Comma"},
             period: {default:'.', shift:'>', altgr: '', shift_altgr: '', code: "Period"},
             slash: {default:'/', shift:'?', altgr: '', shift_altgr: '', code: "Period"},
-            ctrl: {default:'ctrl', func:'ctrl', shift:'?', altgr: '', shift_altgr: '', code: "ControlLeft"},
-            os: {default:'os', func:'os', altgr: '', shift_altgr: '', code: "MetaLeft"},
-            alt: {default:'alt', func:'alt', altgr: '', shift_altgr: '', code: "AltLeft"},
-            space: {default:'space', func:'space', altgr: '', shift_altgr: '', width: "space", code: "Space"},
-            altgr: {default:'Alt Gr', func:'altgr', altgr: '', shift_altgr: '', code: "AltRight"},
-            rctrl: {default:'Alt Gr', func:'altgr', altgr: '', shift_altgr: '', code: "ControlRight"},
+            ctrl: {default:'ctrl', type:'ctrl', shift:'?', altgr: '', shift_altgr: '', code: "ControlLeft"},
+            os: {default:'os', type:'os', altgr: '', shift_altgr: '', code: "MetaLeft"},
+            alt: {default:'alt', type:'alt', altgr: '', shift_altgr: '', code: "AltLeft"},
+            space: {default:'space', type:'space', altgr: '', shift_altgr: '', width: "space", code: "Space"},
+            altgr: {default:'Alt Gr', type:'altgr', altgr: '', shift_altgr: '', code: "AltRight"},
+            rctrl: {default:'Ctrl', type:'altgr', altgr: '', shift_altgr: '', code: "ControlRight"},
             left: {default:'', type: 'left', code: "ArrowLeft"},
             down: {default:'', type: 'down', code: "ArrowDown"},
             right: {default:'', type: 'right', code: "ArrowRight"},
@@ -75,8 +75,8 @@ class Keyboard {
         return [['tilda', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'minus', 'eq', 'backspace'],
                 ['tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'open_square', 'close_square'],
                 ['caps','a','s', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'semicolon', 'apostrophe', 'enter'],
-                ['shift','z','x', 'c', 'v', 'b', 'n', 'm', 'comma', 'period', 'slash', 'rshift'],
-                ['ctrl', 'os', 'alt', 'space', 'altgr', 'rctrl']]
+                ['shift','z','x', 'c', 'v', 'b', 'n', 'm', 'comma', 'period', 'slash', 'up', 'rshift'],
+                ['ctrl', 'os', 'alt', 'space', 'altgr', 'rctrl', 'left', 'down', 'right']]
     }
     generateMatrixKeyboard(matrix, layout) {
         let strHtml = `<div class="keyboard__inner">`
@@ -94,7 +94,7 @@ class Keyboard {
     generateButtonHtml(key, layout) {
         console.log(key);
         const type = layout[key].type ? layout[key].type : "sym";
-        return `<button class="btn" data-type=${type} data-key="${key}" data-keyshift="${layout[key].shift}" data-keyaltgr="${layout[key].altgr}" data-corner="${layout[key].shift_altgr}">
+        return `<button class="btn" data-type=${type} data-key="${key}" data-keyshift="${layout[key].shift}" data-code="${layout[key].code}" data-keyaltgr="${layout[key].altgr}" data-corner="${layout[key].shift_altgr}">
                 ${layout[key].default}</button>`
     }
 }
@@ -121,14 +121,13 @@ document.addEventListener("DOMContentLoaded", ()=>{
                             <div class="keyboard"></div>`;
     document.body.querySelector('.keyboard').innerHTML = kb.generateMatrixKeyboard(kb.matrix, kb.layout);
     let textarea = document.body.querySelector('.ta');
-    textarea.addEventListener("input", (e)=>{
 
-    })
     /* Key reaction */
     //textarea.addEventListener('blur', ()=>{alert('fuck you');})
     document.body.querySelectorAll('.btn').forEach((val)=>val.addEventListener("click", (e)=>{
         const typeInput = val.dataset.type;
         //textarea.value = textarea.value.substring(0,textarea.selectionStart-1) + textarea.value.substring(textarea.selectionStart,textarea.value.length);
+        textarea.focus();
         switch(typeInput){
             case 'sym':
                 //textarea.value += kb.layout[val.dataset.key].default;
@@ -136,13 +135,16 @@ document.addEventListener("DOMContentLoaded", ()=>{
                     textarea.value += kb.layout[val.dataset.key].shift;
                     stat.shift = false;
                 } else {
-                    textarea.value += kb.layout[val.dataset.key].shift;
+                    textarea.value += kb.layout[val.dataset.key].default;
                 }
                 break;
             case 'bskp':
                 textarea.value = textarea.value.substring(0,textarea.selectionStart-1) + textarea.value.substring(textarea.selectionStart,textarea.value.length);
                 break;
             case 'del':
+                break;
+            case 'space':
+                textarea.value += " ";
                 break;
             case 'enter':
                 textarea.value += '\n';
@@ -165,7 +167,17 @@ document.addEventListener("DOMContentLoaded", ()=>{
             case 'caps':
                 stat.caps ? stat.caps = false : stat.caps = true;
                 break;
-            
+            case 'left':
+                textarea.selectionEnd -= 1;
+                break;
+            case 'right':
+                textarea.selectionStart += 1;
+                break;
+            case 'up':
+                textarea.selectionEnd -= 40;
+                break;
+            case 'down':
+                break;
         }
     }));
     
