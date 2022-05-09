@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
         switch(typeInput){
             case 'sym':
                 //textarea.value += kb.layout[val.dataset.key].default;
-                if(stat.shift) {
+                if(stat.shift||stat.caps) {
                     textarea.value += kb.layout[val.dataset.key].shift;
                     stat.shift = false;
                 } else {
@@ -281,6 +281,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
         document.body.querySelectorAll('[data-type="sym"]').forEach((val)=>{
             val.textContent = kb.layout[val.dataset.key].default;
         });
+        resetStat();
         document.body.querySelector('.note-layout span').textContent = stat.layout;
     });
 });
