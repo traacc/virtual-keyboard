@@ -18,8 +18,8 @@ class Keyboard {
             0: {default:'0', shift:')', altgr: '', shift_altgr: ''},
             minus: {default:'-', shift:'_', altgr: '', shift_altgr: ''},
             eq: {default:'=', shift:'+', altgr: '', shift_altgr: ''},
-            backspace: {default: '', type: 'bksp', width: ''},
-            tab: {default: '', type: 'tab', width: ''},
+            backspace: {default: '', type: 'bksp', width: 'bksp'},
+            tab: {default: '', type: 'tab', width: 'tab'},
             q: {default:'q', shift:'Q', altgr: '', shift_altgr: ''},
             w: {default:'w', shift:'W', altgr: '', shift_altgr: ''},
             e: {default:'e', shift:'E', altgr: '', shift_altgr: ''},
@@ -32,33 +32,44 @@ class Keyboard {
             p: {default:'p', shift:'P', altgr: '', shift_altgr: ''},
             open_square: {default:'[', shift:'{', altgr: '', shift_altgr: ''},
             close_square: {default:']', shift:'}', altgr: '', shift_altgr: ''},
-            /*a: 'a',
-            s: 's',
-            d: 'd',
-            f: 'f',
-            g: 'g',
-            h: 'h',
-            j: 'j',
-            k: 'k',
-            l: 'l',
-            semicolon: ';',
-            apostrophe: '\'',
-            backslash: '\\',
-            z: 'z',
-            x: 'x',
-            c: 'c',
-            v: 'v',
-            b: 'b',
-            n: 'n',
-            m: 'm',
-            comma: ',',
-            period: '.',
-            slash: '/'*/
+            backslash: {default:'\\', shift:'|', altgr: '', shift_altgr: ''},
+            caps: {default:'', type: 'caps', width:'caps'},
+            a: {default:'a', shift:'A', altgr: '', shift_altgr: ''},
+            s: {default:'s', shift:'S', altgr: '', shift_altgr: ''},
+            d: {default:'d', shift:'D', altgr: '', shift_altgr: ''},
+            f: {default:'f', shift:'F', altgr: '', shift_altgr: ''},
+            g: {default:'g', shift:'G', altgr: '', shift_altgr: ''},
+            h: {default:'h', shift:'H', altgr: '', shift_altgr: ''},
+            j: {default:'j', shift:'J', altgr: '', shift_altgr: ''},
+            k: {default:'k', shift:'K', altgr: '', shift_altgr: ''},
+            l: {default:'l', shift:'L', altgr: '', shift_altgr: ''},
+            semicolon: {default:';', shift:':', altgr: '', shift_altgr: ''},
+            apostrophe: {default:'\'', shift:'\"', altgr: '', shift_altgr: ''},
+            enter: {default:'', type: 'enter', width:'enter'},
+            shift: {default:'', type: 'shift', width:'shift'},
+            z: {default:'z', shift:'Z', altgr: '', shift_altgr: ''},
+            x: {default:'x', shift:'X', altgr: '', shift_altgr: ''},
+            c: {default:'c', shift:'C', altgr: '', shift_altgr: ''},
+            v: {default:'v', shift:'V', altgr: '', shift_altgr: ''},
+            b: {default:'b', shift:'B', altgr: '', shift_altgr: ''},
+            n: {default:'n', shift:'N', altgr: '', shift_altgr: ''},
+            m: {default:'m', shift:'M', altgr: '', shift_altgr: ''},
+            comma: {default:',', shift:'<', altgr: '', shift_altgr: ''},
+            period: {default:'.', shift:'>', altgr: '', shift_altgr: ''},
+            slash: {default:'/', shift:'?', altgr: '', shift_altgr: ''},
+            ctrl: {default:'ctrl', func:'ctrl', shift:'?', altgr: '', shift_altgr: ''},
+            os: {default:'os', func:'os', altgr: '', shift_altgr: ''},
+            alt: {default:'alt', func:'alt', altgr: '', shift_altgr: ''},
+            space: {default:'space', func:'space', altgr: '', shift_altgr: '', width: "space"},
+            altgr: {default:'Alt Gr', func:'altgr', altgr: '', shift_altgr: ''}
         }
     }
     keyboardMatrix() {
         return [['tilda', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'minus', 'eq', 'backspace'],
-                ['tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'open_square', 'close_square']]
+                ['tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'open_square', 'close_square'],
+                ['caps','a','s', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'semicolon', 'apostrophe', 'enter'],
+                ['shift','z','x', 'c', 'v', 'b', 'n', 'm', 'comma', 'period', 'slash', 'shift'],
+                ['ctrl', 'os', 'alt', 'space', 'altgr', 'ctrl']]
     }
     generateMatrixKeyboard(matrix, layout) {
         let strHtml = `<div class="keyboard__inner">`
@@ -76,7 +87,7 @@ class Keyboard {
     generateButtonHtml(key, layout) {
         console.log(key);
         //if()
-        return `<button class="btn" data-type="sym" data-key="${layout[key].default}" data-keyshift="${layout[key].shift}" data-keyaltgr="${layout[key].altgr}" data-corner="${layout[key].shift_altgr}">
+        return `<button class="btn" data-type="sym" data-key="${key}" data-keyshift="${layout[key].shift}" data-keyaltgr="${layout[key].altgr}" data-corner="${layout[key].shift_altgr}">
                 ${layout[key].default}</button>`
     }
 }
@@ -112,7 +123,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
         //textarea.value = textarea.value.substring(0,textarea.selectionStart-1) + textarea.value.substring(textarea.selectionStart,textarea.value.length);
         switch(typeInput){
             case 'sym':
-                textarea.value += kb.layout[val.dataset.default];
+                textarea.value += kb.layout[val.dataset.key].default;
                 if(stat.shift) {
                     textarea.value += kb.layout[val.dataset.shift];
                 } else if(stat.altgr) {
@@ -143,6 +154,9 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 break;
             case 'altgr':
                 stat.altgr ? stat.altgr = false : stat.altgr = true;
+                break;
+            case 'caps':
+                stat.caps ? stat.caps = false : stat.caps = true;
                 break;
             
         }
