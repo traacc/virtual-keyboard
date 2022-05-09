@@ -1,9 +1,9 @@
 class Keyboard {
-    constructor(){
+    constructor() {
         this.layout = this.addLayout();
         this.matrix = this.keyboardMatrix();
     }
-    addLayout(){
+    addLayout() {
         return {
             tilda: {default:'`', shift:'~', altgr: '', shift_altgr: ''},
             1: {default:'1', shift:'!', altgr: '', shift_altgr: ''},
@@ -18,8 +18,8 @@ class Keyboard {
             0: {default:'0', shift:')', altgr: '', shift_altgr: ''},
             minus: {default:'-', shift:'_', altgr: '', shift_altgr: ''},
             eq: {default:'=', shift:'+', altgr: '', shift_altgr: ''},
-            backspace: {default: '', func: 'bksp', width: ''},
-            tab: {default: '', func: 'tab', width: ''},
+            backspace: {default: '', type: 'bksp', width: ''},
+            tab: {default: '', type: 'tab', width: ''},
             q: {default:'q', shift:'Q', altgr: '', shift_altgr: ''},
             w: {default:'w', shift:'W', altgr: '', shift_altgr: ''},
             e: {default:'e', shift:'E', altgr: '', shift_altgr: ''},
@@ -56,11 +56,11 @@ class Keyboard {
             slash: '/'*/
         }
     }
-    keyboardMatrix(){
+    keyboardMatrix() {
         return [['tilda', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'minus', 'eq', 'backspace'],
                 ['tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'open_square', 'close_square']]
     }
-    generateMatrixKeyboard(matrix, layout){
+    generateMatrixKeyboard(matrix, layout) {
         let strHtml = `<div class="keyboard__inner">`
         for(let row of matrix){
             strHtml += `<div class="keyboard__row">`;
@@ -73,7 +73,7 @@ class Keyboard {
         return strHtml;
 
     }
-    generateButtonHtml(key, layout){
+    generateButtonHtml(key, layout) {
         console.log(key);
         //if()
         return `<button class="btn" data-type="sym" data-key="${layout[key].default}" data-keyshift="${layout[key].shift}" data-keyaltgr="${layout[key].altgr}" data-corner="${layout[key].shift_altgr}">
@@ -82,37 +82,70 @@ class Keyboard {
 }
 
 
-let status = {shift:false, altgr:false, caps:false, ctrl:false, alt:false};
+let stat = {shift:false, altgr:false, caps:false, ctrl:false, alt:false};
 
-function resetStatus(){
-    status.shift = false;
-    status.altgr = false;
-    status.caps = false;
-    status.ctrl = false;
-    status.alt = false;
+function resetStat(){
+    stat.shift = false;
+    stat.altgr = false;
+    stat.ctrl = false;
+    stat.alt = false;
 }
-
+const taCols = 100;
+const taRows = 20;
 //keyboard = new HTMLDivElement();
 document.addEventListener('keydown', function(event) {
     console.log(event.code);
   });
 document.addEventListener("DOMContentLoaded", ()=>{
     let kb = new Keyboard();
-    document.body.innerHTML = `<textarea class='ta'></textarea>
+    document.body.innerHTML = `<textarea class='ta' rows=${taRows} cols=${taCols}></textarea>
                             <div class="keyboard"></div>`;
     document.body.querySelector('.keyboard').innerHTML = kb.generateMatrixKeyboard(kb.matrix, kb.layout);
     let textarea = document.body.querySelector('.ta');
-    textarea.onblur = ()=>{
-        textarea.focus();
-    }
+    textarea.addEventListener("input", (e)=>{
+
+    })
     /* Key reaction */
     //textarea.addEventListener('blur', ()=>{alert('fuck you');})
     document.body.querySelectorAll('.btn').forEach((val)=>val.addEventListener("click", (e)=>{
-        
-        //textarea.value += val.dataset.key;
-        
-        document.dispatchEvent(new KeyboardEvent('keydown', {'code': 'e'}));
-        textarea.dispatchEvent(new KeyboardEvent('keydown', {'code': 'e'}));
+        const typeInput = val.dataset.type;
+        //textarea.value = textarea.value.substring(0,textarea.selectionStart-1) + textarea.value.substring(textarea.selectionStart,textarea.value.length);
+        switch(typeInput){
+            case 'sym':
+                textarea.value += kb.layout[val.dataset.default];
+                if(stat.shift) {
+                    textarea.value += kb.layout[val.dataset.shift];
+                } else if(stat.altgr) {
+                    textarea.value += kb.layout[val.dataset.altgr];
+                } else if(stat.altgr&&stat.shift) {
+                    textarea.value += kb.layout[val.dataset.shift_altgr];
+                }
+                break;
+            case 'bskp':
+                textarea.value = textarea.value.substring(0,textarea.selectionStart-1) + textarea.value.substring(textarea.selectionStart,textarea.value.length);
+                break;
+            case 'del':
+                break;
+            case 'enter':
+                textarea.value += '\n';
+                break;
+            case 'tab':
+                textarea.value += '\t';
+                break;
+            case 'shift':
+                stat.shift ? stat.shift = false : stat.shift = true;
+                break;
+            case 'ctrl':
+                stat.ctrl ? stat.ctrl = false : stat.ctrl = true;
+                break;
+            case 'alt':
+                stat.alt ? stat.alt = false : stat.alt = true;
+                break;
+            case 'altgr':
+                stat.altgr ? stat.altgr = false : stat.altgr = true;
+                break;
+            
+        }
     }));
     
 });
