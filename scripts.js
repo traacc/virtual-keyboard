@@ -12,7 +12,7 @@ const enLayout = {
     0: {default:'0', shift:')', altgr: '', shift_altgr: '', code: "Dight0"},
     minus: {default:'-', shift:'_', altgr: '', shift_altgr: '', code: "Minus"},
     eq: {default:'=', shift:'+', altgr: '', shift_altgr: '', code: "Equal"},
-    backspace: {default: '', type: 'bksp', width: 'bksp', code: "Backspace"},
+    backspace: {default: '←', type: 'bksp', width: 'bksp', code: "Backspace"},
     tab: {default: 'Tab', type: 'tab', width: 'tab', code: "Tab"},
     q: {default:'q', shift:'Q', altgr: '', shift_altgr: '', code: "KeyQ"},
     w: {default:'w', shift:'W', altgr: '', shift_altgr: '', code: "KeyW"},
@@ -48,7 +48,7 @@ const enLayout = {
     b: {default:'b', shift:'B', altgr: '', shift_altgr: '', code: "KeyB"},
     n: {default:'n', shift:'N', altgr: '', shift_altgr: '', code: "KeyN"},
     m: {default:'m', shift:'M', altgr: '', shift_altgr: '', code: "KeyM"},
-    up: {default:'', type: 'up', code: "ArrowUp"},
+    up: {default:'↑', type: 'up', code: "ArrowUp"},
     rshift: {default:'Shift', type: 'shift', code: "ShiftRight"},
     comma: {default:',', shift:'<', altgr: '', shift_altgr: '', code: "Comma"},
     period: {default:'.', shift:'>', altgr: '', shift_altgr: '', code: "Period"},
@@ -59,9 +59,9 @@ const enLayout = {
     space: {default:'space', type:'space', altgr: '', shift_altgr: '', width: "space", code: "Space"},
     altgr: {default:'Alt Gr', type:'altgr', altgr: '', shift_altgr: '', code: "AltRight"},
     rctrl: {default:'Ctrl', type:'altgr', altgr: '', shift_altgr: '', code: "ControlRight"},
-    left: {default:'', type: 'left', code: "ArrowLeft"},
-    down: {default:'', type: 'down', code: "ArrowDown"},
-    right: {default:'', type: 'right', code: "ArrowRight"},
+    left: {default:'←', type: 'left', code: "ArrowLeft"},
+    down: {default:'↓', type: 'down', code: "ArrowDown"},
+    right: {default:'→', type: 'right', code: "ArrowRight"},
 
 }
 const ruLayout = {
@@ -78,7 +78,7 @@ const ruLayout = {
     0: {default:'0', shift:')', altgr: '', shift_altgr: '', code: "Dight0"},
     minus: {default:'-', shift:'_', altgr: '', shift_altgr: '', code: "Minus"},
     eq: {default:'=', shift:'+', altgr: '', shift_altgr: '', code: "Equal"},
-    backspace: {default: '', type: 'bksp', width: 'bksp', code: "Backspace"},
+    backspace: {default: '←', type: 'bksp', width: 'bksp', code: "Backspace"},
     tab: {default: 'Tab', type: 'tab', width: 'tab', code: "Tab"},
     q: {default:'й', shift:'Й', altgr: '', shift_altgr: '', code: "KeyQ"},
     w: {default:'ц', shift:'Ц', altgr: '', shift_altgr: '', code: "KeyW"},
@@ -114,7 +114,7 @@ const ruLayout = {
     b: {default:'и', shift:'И', altgr: '', shift_altgr: '', code: "KeyB"},
     n: {default:'т', shift:'Т', altgr: '', shift_altgr: '', code: "KeyN"},
     m: {default:'ь', shift:'Ь', altgr: '', shift_altgr: '', code: "KeyM"},
-    up: {default:'', type: 'up', code: "ArrowUp"},
+    up: {default:'↑', type: 'up', code: "ArrowUp"},
     rshift: {default:'Shift', type: 'shift', code: "ShiftRight"},
     comma: {default:'б', shift:'Б', altgr: '', shift_altgr: '', code: "Comma"},
     period: {default:'ю', shift:'Ю', altgr: '', shift_altgr: '', code: "Period"},
@@ -124,10 +124,10 @@ const ruLayout = {
     alt: {default:'alt', type:'alt', altgr: '', shift_altgr: '', code: "AltLeft"},
     space: {default:'space', type:'space', altgr: '', shift_altgr: '', width: "space", code: "Space"},
     altgr: {default:'Alt Gr', type:'altgr', altgr: '', shift_altgr: '', code: "AltRight"},
-    rctrl: {default:'Ctrl', type:'altgr', altgr: '', shift_altgr: '', code: "ControlRight"},
-    left: {default:'', type: 'left', code: "ArrowLeft"},
-    down: {default:'', type: 'down', code: "ArrowDown"},
-    right: {default:'', type: 'right', code: "ArrowRight"},
+    rctrl: {default:'Ctrl', type:'ctrl', altgr: '', shift_altgr: '', code: "ControlRight"},
+    left: {default:'←', type: 'left', code: "ArrowLeft"},
+    down: {default:'↓', type: 'down', code: "ArrowDown"},
+    right: {default:'→', type: 'right', code: "ArrowRight"},
 
 }
 class Keyboard {
@@ -159,8 +159,10 @@ class Keyboard {
 
     }
     generateButtonHtml(key) {
+        const classes = "btn" + " " + ((this.layout[key].width) ? this.layout[key].width : "")
+        console.log(classes);
         const type = this.layout[key].type ? this.layout[key].type : "sym";
-        return `<button class="btn" data-type=${type} data-key="${key}" data-keyshift="${this.layout[key].shift}" data-code="${this.layout[key].code}" data-keyaltgr="${this.layout[key].altgr}" data-corner="${this.layout[key].shift_altgr}">
+        return `<button class=${classes} data-type=${type} data-key="${key}" data-keyshift="${this.layout[key].shift}" data-code="${this.layout[key].code}" data-keyaltgr="${this.layout[key].altgr}" data-corner="${this.layout[key].shift_altgr}">
                 ${this.layout[key].default}</button>`
     }
 }
@@ -176,24 +178,41 @@ function resetStat(){
     stat.caps = false;
 }
 
-const taCols = 100;
+function activeClassToggle(){
+    for(let par in stat){
+        console.log(par);
+        if(par=='layout') continue;
+        if(stat[par])
+            document.body.querySelector(`[data-type=${par}]`).classList.add('active');
+        else 
+            document.body.querySelector(`[data-type=${par}]`).classList.remove('active');
+    }
+    
+}
+
+const taCols = 82;
 const taRows = 20;
 
 document.addEventListener('keyup', (e)=> {
-    document.body.querySelector(`[data-code=${e.code}]`).style.backgroundColor = "red";
+    const el = document.body.querySelector(`[data-code=${e.code}]`);
+    if(el)
+        el.classList.remove('active');
   });
 document.addEventListener('keydown', (e)=> {
-    document.body.querySelector(`[data-code=${e.code}]`).style.backgroundColor = "grey";
+    const el = document.body.querySelector(`[data-code=${e.code}]`);
+    if(el)
+        el.classList.add('active');
   });
 document.addEventListener("DOMContentLoaded", ()=>{
     let kb = new Keyboard(enLayout);
-    console.log(kb.layout);
-    document.body.innerHTML = `<textarea class='ta' rows=${taRows} cols=${taCols}></textarea>
+    document.body.innerHTML = `<div class="container">
+                            <textarea class='ta' rows=${taRows} cols=${taCols}></textarea>
                             <div class="keyboard">
                             </div>
                             <div class="layout">
                             <button class="change-layout">Change Layout</button>
                             <p class="note-layout">Currect Layout: <span>en</span></p>
+                            </div>
                             </div>
                             `;
     document.body.querySelector('.keyboard').innerHTML = kb.generateMatrixKeyboard(kb.matrix);
@@ -269,6 +288,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 val.textContent = kb.layout[val.dataset.key].default;
             });
         }
+        activeClassToggle()
     }));
     document.body.querySelector('.change-layout').addEventListener("click",()=>{
         if(stat.layout=='en'){
