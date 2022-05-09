@@ -29,7 +29,10 @@ textarea {
     max-width: 600px;
 }
 .space {
-    width: 30px;
+    width: 154px;
+}
+.shift{
+    width: 82px;
 }
 .keyboard__row{
     display: flex;
