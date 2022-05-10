@@ -499,9 +499,10 @@ document.addEventListener('DOMContentLoaded', () => {
         textarea.selectionStart += 1;
         break;
       case 'up':
-        textarea.selectionEnd -= 40;
+        setOffsetPosition(textarea, 'up');
         break;
       case 'down':
+        setOffsetPosition(textarea, 'down')
         break;
       default:
         break;
@@ -532,3 +533,26 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.querySelector('.note-layout span').textContent = stat.layout;
   });
 });
+
+
+function setOffsetPosition(textarea, operation){
+  let endPositionRow = 0;
+  let beginPositionRow = 0;
+  let currentPosition = textarea.selectionEnd;
+  for (let i = currentPosition; i<textarea.value.length; i++){
+    if (textarea.value[i] === '\n' || i >= textarea.value.length-1){
+      endPositionRow = i;
+      break;
+    }
+  }
+  for (let i = currentPosition; i>0; i--){
+    if (textarea.value[i] === '\n'){
+      beginPositionRow = i;
+      break;
+    }
+  }
+  if (operation === 'up')
+    textarea.selectionEnd -= (endPositionRow - beginPositionRow)
+  else
+    textarea.selectionStart += (endPositionRow - beginPositionRow)
+}
